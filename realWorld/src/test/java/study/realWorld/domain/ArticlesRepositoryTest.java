@@ -12,9 +12,9 @@ public class ArticlesRepositoryTest extends ArticlesTestingUtil {
     public void findOneBySlugTest() {
         createInit();
 
-        Articles firstArticles = articlesRepository.findOneBySlug(articles.getSlug())
+        Articles articlesInDB = articlesRepository.findOneBySlug(articles.getSlug())
                 .orElseThrow(ResourceNotFoundException::new);
-        assertThat(firstArticles.getSlug()).isEqualTo(articles.getSlug());
+        assertThat(articlesInDB.getSlug()).isEqualTo(articles.getSlug());
     }
 
     @Test

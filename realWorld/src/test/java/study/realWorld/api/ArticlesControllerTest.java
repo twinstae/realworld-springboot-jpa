@@ -27,9 +27,8 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
     @Test
     public void getArticleListTest(){
         createInit();
-
         ArticleCreateDto articleCreateDto2 = getCreateArticleDto(title + "2");
-        articles = createArticle(articleCreateDto2);
+        createArticle(articleCreateDto2);
 
         ResponseEntity<ArticleListDto> responseEntity = restTemplate.getForEntity(
                 baseUrl(), ArticleListDto.class
