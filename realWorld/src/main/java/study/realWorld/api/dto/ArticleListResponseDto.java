@@ -7,11 +7,11 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class ArticleListDto {
+public class ArticleListResponseDto {
     private final List<ArticleDto> articles;
     private final int articlesCount;
 
-    public ArticleListDto(List<ArticleDto> articleDataList) {
+    public ArticleListResponseDto(List<ArticleDto> articleDataList) {
         this.articles = articleDataList;
         this.articlesCount = articleDataList.size();
     }

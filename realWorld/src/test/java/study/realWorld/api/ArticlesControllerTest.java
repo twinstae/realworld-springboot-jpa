@@ -6,7 +6,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import study.realWorld.api.dto.ArticleCreateDto;
-import study.realWorld.api.dto.ArticleListDto;
+import study.realWorld.api.dto.ArticleListResponseDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
 import study.realWorld.ArticlesTestingUtil;
@@ -30,13 +30,13 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         ArticleCreateDto articleCreateDto2 = getCreateArticleDto(title + "2");
         createArticle(articleCreateDto2);
 
-        ResponseEntity<ArticleListDto> responseEntity = restTemplate.getForEntity(
-                baseUrl(), ArticleListDto.class
+        ResponseEntity<ArticleListResponseDto> responseEntity = restTemplate.getForEntity(
+                baseUrl(), ArticleListResponseDto.class
         );
 
         assertStatus(responseEntity, HttpStatus.OK);
 
-        ArticleListDto responseBody = responseEntity.getBody();
+        ArticleListResponseDto responseBody = responseEntity.getBody();
         assert responseBody != null;
 
         assertThat(responseBody.getArticlesCount()).isEqualTo(2);

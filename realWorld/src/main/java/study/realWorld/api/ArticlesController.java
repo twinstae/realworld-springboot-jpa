@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.realWorld.api.dto.ArticleCreateDto;
-import study.realWorld.api.dto.ArticleListDto;
+import study.realWorld.api.dto.ArticleListResponseDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
 import study.realWorld.service.ArticlesService;
@@ -21,9 +21,9 @@ public class ArticlesController {
     private final ArticlesService articlesService;
 
     @GetMapping
-    public ResponseEntity<ArticleListDto> getArticles(){
+    public ResponseEntity<ArticleListResponseDto> getArticles(){
         List<ArticleDto> data = articlesService.getFilteredArticles();
-        return ResponseEntity.ok(new ArticleListDto(data));
+        return ResponseEntity.ok(new ArticleListResponseDto(data));
     }
 
     @GetMapping("/{slug}")
@@ -54,7 +54,7 @@ public class ArticlesController {
     }
 
     @DeleteMapping("/{slug}")
-    public ResponseEntity deleteArticle(@PathVariable String slug){
+    public ResponseEntity<?> deleteArticle(@PathVariable String slug){
         articlesService.deleteBySlug(slug);
         return ResponseEntity.noContent().build();
     }
