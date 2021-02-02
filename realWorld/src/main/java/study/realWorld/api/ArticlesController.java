@@ -11,7 +11,6 @@ import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
 import study.realWorld.service.ArticlesService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -31,19 +30,32 @@ public class ArticlesController {
     public ResponseEntity<ArticleResponseDto> findArticleBySlug(
             @PathVariable String slug
     ){
-        System.out.println(slug);
         ArticleDto article = articlesService.findBySlug(slug);
         return ResponseEntity.ok(new ArticleResponseDto(article));
     }
 
     @PostMapping
     public ResponseEntity<ArticleResponseDto> createArticle(
-            @RequestBody ArticleCreateDto articleRequest
+            @RequestBody ArticleCreateDto createBody
     ){
-        ArticleDto article = articlesService.save(articleRequest);
+        ArticleDto article = articlesService.save(createBody);
         return new ResponseEntity<>(
                 new ArticleResponseDto(article),
                 new HttpHeaders(),
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{slug}")
+    public ResponseEntity<ArticleResponseDto> updateArticle(
+            @PathVariable String slug, @RequestBody ArticleCreateDto updateBody
+    ){
+        ArticleDto article = articlesService.updateBySlug(slug, updateBody);
+        return ResponseEntity.ok(new ArticleResponseDto(article));
+    }
+
+    @DeleteMapping("/{slug}")
+    public ResponseEntity deleteArticle(@PathVariable String slug){
+        articlesService.deleteBySlug(slug);
+        return ResponseEntity.noContent().build();
     }
 }

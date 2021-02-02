@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.realWorld.api.dto.ArticleCreateDto;
 import study.realWorld.api.dto.ArticleDto;
+import study.realWorld.api.exception.ResourceNotFoundException;
 import study.realWorld.domain.Articles;
 import study.realWorld.domain.ArticlesRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,7 +32,25 @@ public class ArticlesService {
     }
 
     public ArticleDto findBySlug(String slug){
-        Articles articles = articlesRepository.findOneBySlug(slug);
+        Articles articles = getArticleBySlugOr404(slug);
         return ArticleDto.fromArticles(articles);
+    }
+
+    protected Articles getArticleBySlugOr404(String slug) {
+        return articlesRepository.findOneBySlug(slug)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional
+    public ArticleDto updateBySlug(String slug, ArticleCreateDto updateDto){
+        Articles articles = getArticleBySlugOr404(slug);
+        articles.update(updateDto);
+        return ArticleDto.fromArticles(articles);
+    }
+
+    @Transactional
+    public void deleteBySlug(String slug){
+        Articles articles = getArticleBySlugOr404(slug);
+        articlesRepository.delete(articles);
     }
 }

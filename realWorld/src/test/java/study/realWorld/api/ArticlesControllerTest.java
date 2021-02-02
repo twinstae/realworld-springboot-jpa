@@ -4,12 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import study.realWorld.api.dto.ArticleCreateDto;
 import study.realWorld.api.dto.ArticleListDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
+import study.realWorld.ArticlesTestingUtil;
+import study.realWorld.domain.Articles;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,33 +25,8 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void articleDtoTest(){
-        ArticleDto dto = ArticleDto
-                .builder()
-                .title(title)
-                .description(description)
-                .body(body)
-                .build();
-        checkDtoEqualToDefault(dto);
-    }
-
-    private void checkDtoEqualToDefault(ArticleDto dto) {
-        assertThat(dto.getTitle()).isEqualTo(title);
-        assertThat(dto.getDescription()).isEqualTo(description);
-        assertThat(dto.getBody()).isEqualTo(body);
-    }
-
-    private void assertDtoIsEqualTo(ArticleDto dto, ArticleCreateDto expected) {
-        assertThat(dto.getSlug()).isEqualTo(expected.getSlug());
-        assertThat(dto.getTitle()).isEqualTo(expected.getTitle());
-        assertThat(dto.getDescription()).isEqualTo(expected.getDescription());
-        assertThat(dto.getBody()).isEqualTo(expected.getBody());
-    }
-
-    @Test
     public void getArticleListTest(){
-        articleCreateDto = getCreateArticleDto(title);
-        articles = createArticle(articleCreateDto);
+        createInit();
 
         ArticleCreateDto articleCreateDto2 = getCreateArticleDto(title + "2");
         articles = createArticle(articleCreateDto2);
@@ -60,6 +38,7 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         assertStatus(responseEntity, HttpStatus.OK);
 
         ArticleListDto responseBody = responseEntity.getBody();
+        assert responseBody != null;
 
         assertThat(responseBody.getArticlesCount()).isEqualTo(2);
 
@@ -70,8 +49,13 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         assertDtoIsEqualTo(second, articleCreateDto2);
     }
 
+
     private String baseUrl() {
         return "http://localhost:" + port + "/api/articles";
+    }
+
+    private String slugUrl(){
+        return baseUrl() + "/" + articles.getSlug();
     }
 
     private void assertStatus(ResponseEntity responseEntity, HttpStatus expectedStatus){
@@ -89,26 +73,65 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
 
         assertStatus(responseEntity, HttpStatus.CREATED);
 
-        ArticleResponseDto responseBody = responseEntity.getBody();
-        assert responseBody != null;
-        assertDtoIsEqualTo(responseBody.getArticle(), articleCreateDto);
+        assertBodyIsEqualToDto(responseEntity, articleCreateDto);
     }
 
     @Test
     public void getArticleBySlugTest(){
-        articleCreateDto = getCreateArticleDto(title);
-        articles = createArticle(articleCreateDto);
+        createInit();
 
-        String url = baseUrl() + "/" + articles.getSlug();
+        ResponseEntity<ArticleResponseDto> responseEntity = restTemplate.getForEntity(
+                slugUrl(), ArticleResponseDto.class
+        );
+
+        assertStatus(responseEntity, HttpStatus.OK);
+
+        assertBodyIsEqualToDto(responseEntity, articleCreateDto);
+    }
+
+    protected void assertBodyIsEqualToDto(
+            ResponseEntity<ArticleResponseDto> responseEntity,
+            ArticleCreateDto createUpdateDto
+    ) {
+        ArticleResponseDto responseBody = responseEntity.getBody();
+        assert responseBody != null;
+        assertDtoIsEqualTo(responseBody.getArticle(), createUpdateDto);
+    }
+
+    @Test
+    public void getArticleBySlug_No_Slug(){
+        String url = baseUrl() + "/" + "존재하지않는슬러그";
 
         ResponseEntity<ArticleResponseDto> responseEntity = restTemplate.getForEntity(
                 url, ArticleResponseDto.class
         );
 
-        assertStatus(responseEntity, HttpStatus.OK);
+        assertStatus(responseEntity, HttpStatus.NOT_FOUND);
+    }
 
-        ArticleResponseDto responseBody = responseEntity.getBody();
-        assert responseBody != null;
-        assertDtoIsEqualTo(responseBody.getArticle(), articleCreateDto);
+    @Test
+    public void updateControllerTest(){
+        createInit();
+        articleUpdateDto = getUpdateArticleDto();
+
+        HttpEntity<ArticleCreateDto> requestUpdate = new HttpEntity<>(
+                articleUpdateDto, new HttpHeaders()
+        );
+
+        ResponseEntity<ArticleResponseDto> responseEntity = restTemplate.exchange(
+                slugUrl(), HttpMethod.PUT, requestUpdate, ArticleResponseDto.class
+        );
+
+        assertStatus(responseEntity, HttpStatus.OK);
+        assertBodyIsEqualToDto(responseEntity, articleUpdateDto);
+    }
+
+    @Test
+    public void deleteControllerTest(){
+        createInit();
+        restTemplate.delete(slugUrl());
+
+        Optional<Articles> result = articlesRepository.findOneBySlug(articleCreateDto.getSlug());
+        assertThat(result).isEmpty();
     }
 }
