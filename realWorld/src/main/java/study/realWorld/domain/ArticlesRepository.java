@@ -6,5 +6,4 @@ import java.util.Optional;
 
 public interface ArticlesRepository extends JpaRepository<Articles, Long> {
     Optional<Articles> findOneBySlug(String slug);
-    void deleteBySlug(String slug);
 }
