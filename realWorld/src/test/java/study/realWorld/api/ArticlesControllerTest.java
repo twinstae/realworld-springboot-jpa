@@ -12,6 +12,7 @@ import study.realWorld.api.dto.ArticleResponseDto;
 import study.realWorld.ArticlesTestingUtil;
 import study.realWorld.domain.Articles;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,14 +39,11 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
 
         ArticleListResponseDto responseBody = responseEntity.getBody();
         assert responseBody != null;
+        List<ArticleDto> articles = responseBody.getArticles();
 
-        assertThat(responseBody.getArticlesCount()).isEqualTo(2);
-
-        ArticleDto first = responseBody.getArticles().get(0);
-        assertDtoIsEqualTo(first, articleCreateUpdateDto);
-
-        ArticleDto second = responseBody.getArticles().get(1);
-        assertDtoIsEqualTo(second, articleCreateUpdateDto2);
+        assertThat(articles.size()).isEqualTo(2);
+        assertDtoIsEqualTo(articles.get(0), articleCreateUpdateDto);
+        assertDtoIsEqualTo(articles.get(1), articleCreateUpdateDto2);
     }
 
 
@@ -71,7 +69,6 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         );
 
         assertStatus(responseEntity, HttpStatus.CREATED);
-
         assertBodyIsEqualToDto(responseEntity, articleCreateUpdateDto);
     }
 
@@ -84,7 +81,6 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         );
 
         assertStatus(responseEntity, HttpStatus.OK);
-
         assertBodyIsEqualToDto(responseEntity, articleCreateUpdateDto);
     }
 
@@ -111,12 +107,11 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
     @Test
     public void updateControllerTest(){
         createInit();
-        articleUpdateDto = getUpdateArticleDto();
 
+        articleUpdateDto = getUpdateArticleDto();
         HttpEntity<ArticleCreateUpdateDto> requestUpdate = new HttpEntity<>(
                 articleUpdateDto, new HttpHeaders()
         );
-
         ResponseEntity<ArticleResponseDto> responseEntity = restTemplate.exchange(
                 slugUrl(), HttpMethod.PUT, requestUpdate, ArticleResponseDto.class
         );
@@ -128,6 +123,7 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
     @Test
     public void deleteControllerTest(){
         createInit();
+
         restTemplate.delete(slugUrl());
 
         Optional<Articles> result = articlesRepository.findOneBySlug(articleCreateUpdateDto.getSlug());

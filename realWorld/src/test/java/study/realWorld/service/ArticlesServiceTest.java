@@ -28,10 +28,9 @@ public class ArticlesServiceTest extends ArticlesTestingUtil {
     public void updateServiceTest(){
         createInit();
 
+        String slug = articleCreateUpdateDto.getSlug();
         ArticleCreateUpdateDto updateDto = getUpdateArticleDto();
-        articlesService.updateBySlug(articleCreateUpdateDto.getSlug(), updateDto);
-
-        ArticleDto dto = articlesService.findBySlug(updateDto.getSlug());
+        ArticleDto dto = articlesService.updateBySlug(slug, updateDto);
 
         assertDtoIsEqualTo(dto, updateDto);
     }
@@ -40,7 +39,9 @@ public class ArticlesServiceTest extends ArticlesTestingUtil {
     public void deleteServiceTest(){
         createInit();
         String slug = articles.getSlug();
+
         articlesService.deleteBySlug(slug);
+
         Optional<Articles> result = articlesRepository.findOneBySlug(slug);
         assertThat(result).isEmpty();
     }
