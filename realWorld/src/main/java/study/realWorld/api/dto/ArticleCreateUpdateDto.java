@@ -7,14 +7,14 @@ import study.realWorld.domain.Articles;
 
 @Getter
 @NoArgsConstructor
-public class ArticleCreateDto {
+public class ArticleCreateUpdateDto {
     private String slug;
     private String title;
     private String description;
     private String body;
 
     @Builder
-    public ArticleCreateDto(String title, String description, String body) {
+    public ArticleCreateUpdateDto(String title, String description, String body) {
         this.slug = toSlug(title);
         this.title = title;
         this.description = description;

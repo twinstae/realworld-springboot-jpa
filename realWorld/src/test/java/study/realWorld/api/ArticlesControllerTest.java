@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 import study.realWorld.api.dto.ArticleListResponseDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
@@ -27,8 +27,8 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
     @Test
     public void getArticleListTest(){
         createInit();
-        ArticleCreateDto articleCreateDto2 = getCreateArticleDto(title + "2");
-        createArticle(articleCreateDto2);
+        ArticleCreateUpdateDto articleCreateUpdateDto2 = getCreateArticleDto(title + "2");
+        createArticle(articleCreateUpdateDto2);
 
         ResponseEntity<ArticleListResponseDto> responseEntity = restTemplate.getForEntity(
                 baseUrl(), ArticleListResponseDto.class
@@ -42,10 +42,10 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         assertThat(responseBody.getArticlesCount()).isEqualTo(2);
 
         ArticleDto first = responseBody.getArticles().get(0);
-        assertDtoIsEqualTo(first, articleCreateDto);
+        assertDtoIsEqualTo(first, articleCreateUpdateDto);
 
         ArticleDto second = responseBody.getArticles().get(1);
-        assertDtoIsEqualTo(second, articleCreateDto2);
+        assertDtoIsEqualTo(second, articleCreateUpdateDto2);
     }
 
 
@@ -64,15 +64,15 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
 
     @Test
     public void createArticleTest(){
-        articleCreateDto = getCreateArticleDto(title);
+        articleCreateUpdateDto = getCreateArticleDto(title);
 
         ResponseEntity<ArticleResponseDto> responseEntity = restTemplate.postForEntity(
-                baseUrl(), articleCreateDto, ArticleResponseDto.class
+                baseUrl(), articleCreateUpdateDto, ArticleResponseDto.class
         );
 
         assertStatus(responseEntity, HttpStatus.CREATED);
 
-        assertBodyIsEqualToDto(responseEntity, articleCreateDto);
+        assertBodyIsEqualToDto(responseEntity, articleCreateUpdateDto);
     }
 
     @Test
@@ -85,12 +85,12 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
 
         assertStatus(responseEntity, HttpStatus.OK);
 
-        assertBodyIsEqualToDto(responseEntity, articleCreateDto);
+        assertBodyIsEqualToDto(responseEntity, articleCreateUpdateDto);
     }
 
     protected void assertBodyIsEqualToDto(
             ResponseEntity<ArticleResponseDto> responseEntity,
-            ArticleCreateDto createUpdateDto
+            ArticleCreateUpdateDto createUpdateDto
     ) {
         ArticleResponseDto responseBody = responseEntity.getBody();
         assert responseBody != null;
@@ -113,7 +113,7 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         createInit();
         articleUpdateDto = getUpdateArticleDto();
 
-        HttpEntity<ArticleCreateDto> requestUpdate = new HttpEntity<>(
+        HttpEntity<ArticleCreateUpdateDto> requestUpdate = new HttpEntity<>(
                 articleUpdateDto, new HttpHeaders()
         );
 
@@ -130,7 +130,7 @@ public class ArticlesControllerTest extends ArticlesTestingUtil {
         createInit();
         restTemplate.delete(slugUrl());
 
-        Optional<Articles> result = articlesRepository.findOneBySlug(articleCreateDto.getSlug());
+        Optional<Articles> result = articlesRepository.findOneBySlug(articleCreateUpdateDto.getSlug());
         assertThat(result).isEmpty();
     }
 }

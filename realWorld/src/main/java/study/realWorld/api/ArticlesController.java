@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 import study.realWorld.api.dto.ArticleListResponseDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.dto.ArticleResponseDto;
@@ -36,7 +36,7 @@ public class ArticlesController {
 
     @PostMapping
     public ResponseEntity<ArticleResponseDto> createArticle(
-            @RequestBody ArticleCreateDto createBody
+            @RequestBody ArticleCreateUpdateDto createBody
     ){
         ArticleDto article = articlesService.save(createBody);
         return new ResponseEntity<>(
@@ -47,7 +47,7 @@ public class ArticlesController {
 
     @PutMapping("/{slug}")
     public ResponseEntity<ArticleResponseDto> updateArticle(
-            @PathVariable String slug, @RequestBody ArticleCreateDto updateBody
+            @PathVariable String slug, @RequestBody ArticleCreateUpdateDto updateBody
     ){
         ArticleDto article = articlesService.updateBySlug(slug, updateBody);
         return ResponseEntity.ok(new ArticleResponseDto(article));

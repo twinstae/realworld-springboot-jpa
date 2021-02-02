@@ -3,14 +3,13 @@ package study.realWorld.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.api.exception.ResourceNotFoundException;
 import study.realWorld.domain.Articles;
 import study.realWorld.domain.ArticlesRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -19,8 +18,8 @@ public class ArticlesService {
     private final ArticlesRepository articlesRepository;
 
     @Transactional
-    public ArticleDto save(ArticleCreateDto articleCreateDto){
-        Articles articles = articlesRepository.save(articleCreateDto.toEntity());
+    public ArticleDto save(ArticleCreateUpdateDto articleCreateUpdateDto){
+        Articles articles = articlesRepository.save(articleCreateUpdateDto.toEntity());
         return ArticleDto.fromArticles(articles);
     }
 
@@ -42,7 +41,7 @@ public class ArticlesService {
     }
 
     @Transactional
-    public ArticleDto updateBySlug(String slug, ArticleCreateDto updateDto){
+    public ArticleDto updateBySlug(String slug, ArticleCreateUpdateDto updateDto){
         Articles articles = getArticleBySlugOr404(slug);
         articles.update(updateDto);
         return ArticleDto.fromArticles(articles);

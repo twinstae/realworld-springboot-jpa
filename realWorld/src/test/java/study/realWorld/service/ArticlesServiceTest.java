@@ -2,7 +2,7 @@ package study.realWorld.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.ArticlesTestingUtil;
 import study.realWorld.domain.Articles;
@@ -28,8 +28,8 @@ public class ArticlesServiceTest extends ArticlesTestingUtil {
     public void updateServiceTest(){
         createInit();
 
-        ArticleCreateDto updateDto = getUpdateArticleDto();
-        articlesService.updateBySlug(articleCreateDto.getSlug(), updateDto);
+        ArticleCreateUpdateDto updateDto = getUpdateArticleDto();
+        articlesService.updateBySlug(articleCreateUpdateDto.getSlug(), updateDto);
 
         ArticleDto dto = articlesService.findBySlug(updateDto.getSlug());
 

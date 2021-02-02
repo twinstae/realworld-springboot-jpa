@@ -1,11 +1,9 @@
 package study.realWorld;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 import study.realWorld.api.dto.ArticleDto;
 import study.realWorld.domain.Articles;
 import study.realWorld.domain.ArticlesRepository;
@@ -19,8 +17,8 @@ public class ArticlesTestingUtil {
     protected String description = "개요";
     protected String body = "내용";
     protected Articles articles;
-    protected ArticleCreateDto articleCreateDto;
-    protected ArticleCreateDto articleUpdateDto;
+    protected ArticleCreateUpdateDto articleCreateUpdateDto;
+    protected ArticleCreateUpdateDto articleUpdateDto;
 
     @Autowired
     protected
@@ -31,8 +29,8 @@ public class ArticlesTestingUtil {
         articlesRepository.deleteAll();
     }
 
-    public ArticleCreateDto getUpdateArticleDto() {
-        return ArticleCreateDto
+    public ArticleCreateUpdateDto getUpdateArticleDto() {
+        return ArticleCreateUpdateDto
                 .builder()
                 .title("제목수정")
                 .description("개요수정")
@@ -40,15 +38,15 @@ public class ArticlesTestingUtil {
                 .build();
     }
 
-    public void assertDtoIsEqualTo(ArticleDto dto, ArticleCreateDto expected) {
+    public void assertDtoIsEqualTo(ArticleDto dto, ArticleCreateUpdateDto expected) {
         assertThat(dto.getSlug()).isEqualTo(expected.getSlug());
         assertThat(dto.getTitle()).isEqualTo(expected.getTitle());
         assertThat(dto.getDescription()).isEqualTo(expected.getDescription());
         assertThat(dto.getBody()).isEqualTo(expected.getBody());
     }
 
-    public ArticleCreateDto getCreateArticleDto(String testTitle) {
-        return ArticleCreateDto
+    public ArticleCreateUpdateDto getCreateArticleDto(String testTitle) {
+        return ArticleCreateUpdateDto
                 .builder()
                 .title(testTitle)
                 .description(description)
@@ -56,12 +54,12 @@ public class ArticlesTestingUtil {
                 .build();
     }
 
-    public Articles createArticle(ArticleCreateDto articleCreateDto){
-        return articlesRepository.save(articleCreateDto.toEntity());
+    public Articles createArticle(ArticleCreateUpdateDto articleCreateUpdateDto){
+        return articlesRepository.save(articleCreateUpdateDto.toEntity());
     }
 
     public void createInit() {
-        articleCreateDto = getCreateArticleDto(title);
-        articles = createArticle(articleCreateDto);
+        articleCreateUpdateDto = getCreateArticleDto(title);
+        articles = createArticle(articleCreateUpdateDto);
     }
 }

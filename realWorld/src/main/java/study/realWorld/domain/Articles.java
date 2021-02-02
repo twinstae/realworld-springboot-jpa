@@ -3,7 +3,7 @@ package study.realWorld.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import study.realWorld.api.dto.ArticleCreateDto;
+import study.realWorld.api.dto.ArticleCreateUpdateDto;
 
 import javax.persistence.*;
 
@@ -36,7 +36,7 @@ public class Articles {
         this.body = body;
     }
 
-    public void update(ArticleCreateDto updateDto){
+    public void update(ArticleCreateUpdateDto updateDto){
         if (!"".equals(slug)){
             this.slug = updateDto.getSlug();
         }
